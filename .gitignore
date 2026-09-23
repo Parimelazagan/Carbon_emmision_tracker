@@ -4,6 +4,7 @@ dist/
 *.log
 uploads/
 server/generated/
+server/storage/reports/*.pdf
 client/dist/
 .DS_Store
 Thumbs.db
