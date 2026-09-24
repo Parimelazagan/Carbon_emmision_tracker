@@ -7,6 +7,7 @@ import facilitiesRouter from './routes/facilities.js'
 import consumptionRouter from './routes/consumption.js'
 import uploadRouter from './routes/upload.js'
 import reportsRouter from './routes/reports.js'
+import emissionFactorsRouter from './routes/emissionFactors.js'
 import { notFound } from './middleware/notFound.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
@@ -26,6 +27,7 @@ app.use('/api/facilities', facilitiesRouter)
 app.use('/api/consumption', consumptionRouter)
 app.use('/api/upload', uploadRouter)
 app.use('/api/reports', reportsRouter)
+app.use('/api/emission-factors', emissionFactorsRouter)
 
 app.use(notFound)
 app.use(errorHandler)

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "seed": "node src/scripts/seedEmissionFactors.js",
+    "seed:sample": "node src/scripts/seedSampleData.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

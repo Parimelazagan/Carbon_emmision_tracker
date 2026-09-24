@@ -29,6 +29,11 @@ const consumptionRecordSchema = new mongoose.Schema(
       required: [true, 'Unit is required'],
       trim: true,
     },
+    region: {
+      type: String,
+      required: [true, 'Region is required'],
+      trim: true,
+    },
     calculatedCO2e: {
       type: Number,
       required: [true, 'Calculated CO2e is required'],
@@ -55,15 +60,30 @@ const consumptionRecordSchema = new mongoose.Schema(
         message: 'Source must be manual or bulk_upload',
       },
     },
+    verificationStatus: {
+      type: String,
+      enum: {
+        values: ['verified', 'estimated', 'unverified'],
+        message: 'verificationStatus must be verified, estimated, or unverified',
+      },
+      default: 'unverified',
+    },
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    verifiedAt: {
+      type: Date,
+    },
   },
   { timestamps: true },
 )
 
-// Indexes for every field dashboard queries filter or group by
 consumptionRecordSchema.index({ date: 1 })
 consumptionRecordSchema.index({ facility: 1 })
 consumptionRecordSchema.index({ type: 1 })
 consumptionRecordSchema.index({ scope: 1 })
+consumptionRecordSchema.index({ verificationStatus: 1 })
 
 const ConsumptionRecord = mongoose.model('ConsumptionRecord', consumptionRecordSchema)
 export default ConsumptionRecord

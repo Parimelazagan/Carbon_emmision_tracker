@@ -2,8 +2,16 @@ import Joi from 'joi'
 import Organization from '../models/Organization.js'
 
 const updateSchema = Joi.object({
-  name: Joi.string().trim().min(1).max(200).required(),
-})
+  name: Joi.string().trim().min(1).max(200),
+  baselineYear: Joi.number()
+    .integer()
+    .min(2000)
+    .max(new Date().getFullYear())
+    .messages({
+      'number.min': 'baselineYear must be 2000 or later',
+      'number.max': 'baselineYear cannot be in the future',
+    }),
+}).min(1) // at least one field required
 
 /**
  * GET /api/organizations/:id
@@ -50,7 +58,8 @@ export async function updateOrganization(req, res, next) {
       return res.status(403).json({ success: false, data: null, error: { message: 'Forbidden' } })
     }
 
-    org.name = value.name
+    org.name = value.name ?? org.name
+    if (value.baselineYear !== undefined) org.baselineYear = value.baselineYear
     await org.save()
 
     return res.json({ success: true, data: { organization: org }, error: null })

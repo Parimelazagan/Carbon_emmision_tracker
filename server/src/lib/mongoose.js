@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
-import dns from "dns";
-dns.setServers(["1.1.1.1"]);
+import dns from 'dns'
+
+// Node.js on Windows can fail SRV lookups via the default system resolver.
+// Use public resolvers as a fallback to ensure Atlas mongodb+srv:// URIs work.
+dns.setServers(['1.1.1.1', '8.8.8.8'])
+dns.setDefaultResultOrder('ipv4first')
+
 /**
  * Connect to MongoDB. Called once at server startup.
  * Exits the process on failure so a broken DB doesn't silently serve broken responses.

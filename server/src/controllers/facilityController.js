@@ -5,6 +5,8 @@ import ConsumptionRecord from '../models/ConsumptionRecord.js'
 const facilitySchema = Joi.object({
   name: Joi.string().trim().min(1).max(200).required(),
   location: Joi.string().trim().max(300).allow('').default(''),
+  floorAreaSqM: Joi.number().min(0).allow(null),
+  headcount: Joi.number().integer().min(0).allow(null),
 })
 
 /**
@@ -62,6 +64,8 @@ export async function updateFacility(req, res, next) {
 
     facility.name = value.name
     facility.location = value.location
+    if (value.floorAreaSqM !== undefined) facility.floorAreaSqM = value.floorAreaSqM
+    if (value.headcount !== undefined) facility.headcount = value.headcount
     await facility.save()
 
     return res.json({ success: true, data: { facility }, error: null })

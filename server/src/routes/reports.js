@@ -8,6 +8,7 @@ import {
   generateReport,
   listReports,
   downloadReport,
+  deleteReport,
 } from '../controllers/reportsController.js'
 import { requireAuth, requireRole } from '../middleware/auth.js'
 
@@ -21,8 +22,9 @@ router.get('/by-facility',  requireAuth, byFacility)
 router.get('/summary',      requireAuth, summary)
 
 // ── PDF generation & download ─────────────────────────────────────────────────
-router.post('/generate',        requireAuth, requireRole('admin', 'data_entry'), generateReport)
-router.get('/list',             requireAuth, listReports)
-router.get('/download/:id',     requireAuth, downloadReport)
+router.post('/generate',      requireAuth, requireRole('admin', 'data_entry'), generateReport)
+router.get('/list',           requireAuth, listReports)
+router.get('/download/:id',   requireAuth, downloadReport)
+router.delete('/:id',         requireAuth, requireRole('admin'), deleteReport)
 
 export default router

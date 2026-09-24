@@ -209,3 +209,29 @@ export async function downloadReport(req, res, next) {
     fs.createReadStream(filePath).pipe(res)
   } catch (err) { next(err) }
 }
+
+/**
+ * DELETE /api/reports/:id
+ * Admin only. Removes the Report document and the PDF file from disk.
+ */
+export async function deleteReport(req, res, next) {
+  try {
+    const report = await Report.findById(req.params.id)
+    if (!report) {
+      return res.status(404).json({ success: false, data: null, error: { message: 'Report not found' } })
+    }
+
+    if (report.organization.toString() !== req.user.org.toString()) {
+      return res.status(403).json({ success: false, data: null, error: { message: 'Forbidden' } })
+    }
+
+    // Delete the PDF file from disk (best-effort — don't fail if already gone)
+    const filePath = path.resolve(report.filePath)
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+
+    await report.deleteOne()
+    return res.json({ success: true, data: { message: 'Report deleted' }, error: null })
+  } catch (err) { next(err) }
+}

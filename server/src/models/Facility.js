@@ -17,6 +17,14 @@ const facilitySchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    floorAreaSqM: {
+      type: Number,
+      min: [0, 'Floor area must be non-negative'],
+    },
+    headcount: {
+      type: Number,
+      min: [0, 'Headcount must be non-negative'],
+    },
   },
   { timestamps: true },
 )
