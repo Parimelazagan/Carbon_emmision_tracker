@@ -5,8 +5,8 @@ import { calculateEmissions } from './emissionsCalculator.js'
 
 const EMISSION_TYPES = ['electricity', 'diesel', 'petrol', 'natural_gas', 'water']
 
-// Expected columns (case-insensitive, trimmed)
-const REQUIRED_COLUMNS = ['date', 'facilityid', 'type', 'amount', 'unit', 'region']
+// Expected columns — must match the post-normalised key names
+const REQUIRED_COLUMNS = ['date', 'facilityId', 'type', 'amount', 'unit', 'region']
 
 const rowSchema = Joi.object({
   date: Joi.date().iso().max('now').required().messages({

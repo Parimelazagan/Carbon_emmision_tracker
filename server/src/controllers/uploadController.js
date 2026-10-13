@@ -22,9 +22,13 @@ export async function uploadFile(req, res, next) {
     const { valid, rejected, totalRows } = await parseUpload(req.file.buffer, fileType)
 
     // Verify all facilityIds in valid rows belong to this org
-    const facilityIds = [...new Set(valid.map((r) => r.data.facility))]
+    // Filter out any non-ObjectId strings before querying to avoid CastError
+    const mongoose = (await import('mongoose')).default
+    const rawFacilityIds = [...new Set(valid.map((r) => r.data.facility))]
+    const validObjectIds = rawFacilityIds.filter((id) => mongoose.Types.ObjectId.isValid(id))
+
     const orgFacilities = await Facility.find(
-      { _id: { $in: facilityIds }, organization: req.user.org },
+      { _id: { $in: validObjectIds }, organization: req.user.org },
       '_id',
     )
     const validFacilityIds = new Set(orgFacilities.map((f) => f._id.toString()))
@@ -54,7 +58,11 @@ export async function uploadFile(req, res, next) {
       }
     }
 
-    const allRejected = [...rejected, ...facilityRejected]
+    const allRejected = [
+      // parser returns { rowNumber, reasons } — normalise to model's { row, reasons }
+      ...rejected.map(({ rowNumber, reasons }) => ({ row: rowNumber, reasons })),
+      ...facilityRejected,
+    ]
 
     let imported = []
     if (toInsert.length > 0) {
