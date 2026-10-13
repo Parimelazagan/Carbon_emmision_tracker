@@ -244,7 +244,12 @@ function drawMethodology(doc) {
  */
 export function generatePDF(data, outputPath) {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ size: 'A4', margins: { top: 50, bottom: 50, left: 50, right: 50 }, autoFirstPage: false })
+    const doc = new PDFDocument({
+      size: 'A4',
+      margins: { top: 50, bottom: 50, left: 50, right: 50 },
+      autoFirstPage: false,
+      bufferPages: true, // keep all pages in memory so switchToPage works
+    })
     const stream = fs.createWriteStream(outputPath)
 
     doc.pipe(stream)
@@ -269,14 +274,16 @@ export function generatePDF(data, outputPath) {
     drawTrend(doc, { trend: data.trend })
     drawMethodology(doc)
 
-    // Footer on every page
-    const pageCount = doc.bufferedPageRange().count
-    for (let i = 0; i < pageCount; i++) {
-      doc.switchToPage(i)
-      if (i === 0) continue // skip cover
+    // Footer on every page — use bufferedPageRange() correctly
+    const range = doc.bufferedPageRange()  // { start, count }
+    const totalPages = range.count
+
+    for (let i = 0; i < totalPages; i++) {
+      doc.switchToPage(range.start + i)
+      if (i === 0) continue // skip cover page footer
       doc.font(FONT_REGULAR).fontSize(7).fillColor(MID_GREY)
          .text(
-           `Page ${i + 1} of ${pageCount}  |  Carbon Tracker  |  Confidential`,
+           `Page ${i + 1} of ${totalPages}  |  Carbon Tracker  |  Confidential`,
            50,
            doc.page.height - 40,
            { align: 'center' },
