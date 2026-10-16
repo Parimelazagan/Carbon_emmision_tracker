@@ -122,7 +122,7 @@ export async function emissionsByFacility({ orgId, from, to }) {
         as: 'facilityDoc',
       },
     },
-    { $unwind: { path: '$facilityDoc', preserveNullAndEmpty: true } },
+    { $unwind: { path: '$facilityDoc', preserveNullAndEmptyArrays: true } },
     {
       $project: {
         _id: 0,

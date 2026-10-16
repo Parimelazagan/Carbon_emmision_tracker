@@ -34,6 +34,30 @@ export async function getConsumptionRecord(id) {
 }
 
 /**
+ * Update a consumption record by ID.
+ *
+ * @param {string} id
+ * @param {{ date?, type?, amount?, unit?, region? }} data
+ * @returns {Promise<{ record }>}
+ */
+export async function updateConsumptionRecord(id, data) {
+  const res = await api.patch(`/consumption/${id}`, data)
+  return res.data.data
+}
+
+/**
+ * Verify a consumption record by ID (Admin only).
+ *
+ * @param {string} id
+ * @param {'verified' | 'estimated' | 'unverified'} verificationStatus
+ * @returns {Promise<{ record }>}
+ */
+export async function verifyConsumptionRecord(id, verificationStatus) {
+  const res = await api.patch(`/consumption/${id}/verify`, { verificationStatus })
+  return res.data.data
+}
+
+/**
  * Delete a consumption record by ID. Admin only.
  *
  * @param {string} id

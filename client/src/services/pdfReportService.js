@@ -27,17 +27,16 @@ export async function listReports(params = {}) {
 
 /**
  * Download a previously generated PDF report.
- * Returns a Blob URL you can assign to an <a> tag and click() to trigger download.
+ * Returns a Blob URL and automatically triggers browser download.
  *
  * @param {string} reportId
- * @param {string} [filename]  suggested download filename
- * @returns {Promise<string>}  object URL (remember to URL.revokeObjectURL after use)
+ * @param {string} [filename] suggested download filename
+ * @returns {Promise<string>} object URL
  */
 export async function downloadReport(reportId, filename = 'carbon-report.pdf') {
   const res = await api.get(`/reports/download/${reportId}`, { responseType: 'blob' })
   const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
 
-  // Trigger browser download automatically
   const a = document.createElement('a')
   a.href = url
   a.download = filename
@@ -46,4 +45,15 @@ export async function downloadReport(reportId, filename = 'carbon-report.pdf') {
   document.body.removeChild(a)
 
   return url
+}
+
+/**
+ * Delete a generated report by ID (Admin only).
+ *
+ * @param {string} reportId
+ * @returns {Promise<{ message }>}
+ */
+export async function deleteReport(reportId) {
+  const res = await api.delete(`/reports/${reportId}`)
+  return res.data.data
 }
