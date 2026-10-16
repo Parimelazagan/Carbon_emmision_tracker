@@ -42,6 +42,7 @@ app.use(
 )
 app.use(express.json())
 
+// Mount routes with /api prefix
 app.use('/api/health', healthRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/organizations', organizationsRouter)
@@ -50,6 +51,16 @@ app.use('/api/consumption', consumptionRouter)
 app.use('/api/upload', uploadRouter)
 app.use('/api/reports', reportsRouter)
 app.use('/api/emission-factors', emissionFactorsRouter)
+
+// Also mount at root for direct base URLs without /api prefix
+app.use('/health', healthRouter)
+app.use('/auth', authRouter)
+app.use('/organizations', organizationsRouter)
+app.use('/facilities', facilitiesRouter)
+app.use('/consumption', consumptionRouter)
+app.use('/upload', uploadRouter)
+app.use('/reports', reportsRouter)
+app.use('/emission-factors', emissionFactorsRouter)
 
 app.use(notFound)
 app.use(errorHandler)
