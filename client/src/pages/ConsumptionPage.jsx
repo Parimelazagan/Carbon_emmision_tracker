@@ -612,12 +612,24 @@ export default function ConsumptionPage() {
                     className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-900 outline-none focus:border-emerald-600"
                     required
                   >
+                    <option value="" disabled>
+                      {facilities.length === 0 ? 'No facilities found — add one first' : 'Select a facility'}
+                    </option>
                     {facilities.map((f) => (
                       <option key={f._id} value={f._id}>
-                        {f.name}
+                        {f.name} {f.location ? `(${f.location})` : ''}
                       </option>
                     ))}
                   </select>
+                  {facilities.length === 0 && (
+                    <p className="text-[11px] text-amber-600 mt-1">
+                      No facilities exist yet.{' '}
+                      <Link to="/facilities" className="underline font-semibold text-emerald-700">
+                        Create a facility
+                      </Link>{' '}
+                      first.
+                    </p>
+                  )}
                 </div>
 
                 {/* Date */}

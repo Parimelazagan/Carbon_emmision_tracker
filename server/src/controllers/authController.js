@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import Joi from 'joi'
 import User from '../models/User.js'
 import Organization from '../models/Organization.js'
+import Facility from '../models/Facility.js'
 import Invite from '../models/Invite.js'
 import mongoose from 'mongoose'
 
@@ -77,10 +78,14 @@ export async function signup(req, res, next) {
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS)
 
-    let org, user
+    let org, user, defaultFacility
     await session.withTransaction(async () => {
       ;[org] = await Organization.create([{ name: organizationName }], { session })
       ;[user] = await User.create([{ name, email, passwordHash, role, organization: org._id }], { session })
+      ;[defaultFacility] = await Facility.create(
+        [{ name: 'Main Facility / HQ', location: 'Headquarters', organization: org._id }],
+        { session },
+      )
     })
 
     const token = issueToken(user)
